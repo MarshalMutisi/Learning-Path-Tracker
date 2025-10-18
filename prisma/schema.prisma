@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id @default(uuid())
+  clerkUserId String        @unique
+  email       String        @unique
+  name        String?
+  imageUrl    String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  learningPaths LearningPath[]
+  
+  @@map("users")
+}
+
+model LearningPath {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  progress    Float    @default(0)
+  userId      String
+  user        User     @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  modules     Module[]
+  
+  @@index([userId])
+  @@map("learning_paths")
+}
+
+model Module {
+  id             String        @id @default(uuid())
+  title          String
+  description    String?
+  order          Int
+  progress       Float         @default(0)
+  learningPathId String
+  learningPath   LearningPath  @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+  learningItems  LearningItem[]
+  createdAt      DateTime      @default(now())
+  
+  @@index([learningPathId])
+  @@map("modules")
+}
+
+model LearningItem {
+  id           String       @id @default(uuid())
+  title        String
+  url          String?
+  type         ResourceType
+  isComplete   Boolean      @default(false)
+  estimatedHours Int?
+  moduleId     String
+  module       Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  notes        Note[]
+  createdAt    DateTime     @default(now())
+  
+  @@index([moduleId])
+  @@map("learning_items")
+}
+
+model Note {
+  id             String       @id @default(uuid())
+  content        String
+  learningItemId String
+  learningItem   LearningItem @relation(fields: [learningItemId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  
+  @@index([learningItemId])
+  @@map("notes")
+}
+
+enum ResourceType {
+  VIDEO
+  ARTICLE
+  COURSE
+  BOOK
+  TUTORIAL
+  DOCUMENTATION
+  EXERCISE
+  PROJECT
+}
