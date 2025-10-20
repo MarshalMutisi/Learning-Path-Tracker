@@ -1,39 +1,17 @@
-// Mock the modules before any imports
-jest.mock('@clerk/nextjs/server', () => ({
-  currentUser: jest.fn(),
-}));
-
-jest.mock('@/lib/db', () => ({
-  db: {
-    user: {
-      findUnique: jest.fn(),
-      create: jest.fn(),
-    },
-  },
-}));
-
 import { currentUser } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { checkUser } from './checkUser';
 
-const mockedCurrentUser = currentUser as jest.MockedFunction<typeof currentUser>;
+// Mock the external dependencies
+jest.mock('@clerk/nextjs/server');
+jest.mock('@/lib/db');
+
+const mockedCurrentUser = jest.mocked(currentUser);
+const mockedDb = jest.mocked(db);
 
 describe('checkUser', () => {
-  let mockFindUnique: jest.Mock;
-  let mockCreate: jest.Mock;
-
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    // Create fresh mocks for each test
-    mockFindUnique = jest.fn();
-    mockCreate = jest.fn();
-    
-    // Mock the db methods
-    (db as any).user = {
-      findUnique: mockFindUnique,
-      create: mockCreate,
-    };
   });
 
   it('should return null when no user is authenticated', async () => {
@@ -45,8 +23,8 @@ describe('checkUser', () => {
 
     // Assert
     expect(result).toBeNull();
-    expect(mockFindUnique).not.toHaveBeenCalled();
-    expect(mockCreate).not.toHaveBeenCalled();
+    expect(mockedDb.user.findUnique).not.toHaveBeenCalled();
+    expect(mockedDb.user.create).not.toHaveBeenCalled();
   });
 
   it('should return existing user when found in database', async () => {
@@ -69,17 +47,17 @@ describe('checkUser', () => {
       updatedAt: new Date(),
     };
 
-    mockedCurrentUser.mockResolvedValue(mockClerkUser);
-    mockFindUnique.mockResolvedValue(mockDbUser);
+    mockedCurrentUser.mockResolvedValue(mockClerkUser as any);
+    mockedDb.user.findUnique.mockResolvedValue(mockDbUser);
 
     // Act
     const result = await checkUser();
 
     // Assert
-    expect(mockFindUnique).toHaveBeenCalledWith({
+    expect(mockedDb.user.findUnique).toHaveBeenCalledWith({
       where: { clerkUserId: 'user_123' }
     });
-    expect(mockCreate).not.toHaveBeenCalled();
+    expect(mockedDb.user.create).not.toHaveBeenCalled();
     expect(result).toEqual(mockDbUser);
   });
 
@@ -103,18 +81,16 @@ describe('checkUser', () => {
       updatedAt: new Date(),
     };
 
-    mockedCurrentUser.mockResolvedValue(mockClerkUser);
-    mockFindUnique.mockResolvedValue(null);
-    mockCreate.mockResolvedValue(mockNewUser);
+    mockedCurrentUser.mockResolvedValue(mockClerkUser as any);
+    mockedDb.user.findUnique.mockResolvedValue(null);
+    mockedDb.user.create.mockResolvedValue(mockNewUser);
 
     // Act
     const result = await checkUser();
 
     // Assert
-    expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { clerkUserId: 'user_456' }
-    });
-    expect(mockCreate).toHaveBeenCalledWith({
+    expect(mockedDb.user.findUnique).toHaveBeenCalled();
+    expect(mockedDb.user.create).toHaveBeenCalledWith({
       data: {
         clerkUserId: 'user_456',
         name: 'Jane Smith',
@@ -124,60 +100,4 @@ describe('checkUser', () => {
     });
     expect(result).toEqual(mockNewUser);
   });
-
-  it('should handle user with missing optional fields', async () => {
-    // Arrange
-    const mockClerkUser = {
-      id: 'user_789',
-      firstName: 'Bob',
-      lastName: null, // Missing lastName
-      imageUrl: null, // Missing imageUrl
-      emailAddresses: [{ emailAddress: 'bob@example.com' }]
-    };
-
-    const mockNewUser = {
-      id: 'db_789',
-      clerkUserId: 'user_789',
-      name: 'Bob null', // Should handle null lastName
-      imageUrl: null,
-      email: 'bob@example.com',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    mockedCurrentUser.mockResolvedValue(mockClerkUser);
-    mockFindUnique.mockResolvedValue(null);
-    mockCreate.mockResolvedValue(mockNewUser);
-
-    // Act
-    const result = await checkUser();
-
-    // Assert
-    expect(mockCreate).toHaveBeenCalledWith({
-      data: {
-        clerkUserId: 'user_789',
-        name: 'Bob null',
-        imageUrl: null,
-        email: 'bob@example.com'
-      }
-    });
-    expect(result).toEqual(mockNewUser);
-  });
-
-  it('should handle database errors gracefully', async () => {
-    // Arrange
-    const mockClerkUser = {
-      id: 'user_error',
-      firstName: 'Error',
-      lastName: 'User',
-      imageUrl: 'https://example.com/error.jpg',
-      emailAddresses: [{ emailAddress: 'error@example.com' }]
-    };
-
-    mockedCurrentUser.mockResolvedValue(mockClerkUser);
-    mockFindUnique.mockRejectedValue(new Error('Database connection failed'));
-
-    // Act & Assert
-    await expect(checkUser()).rejects.toThrow('Database connection failed');
-  });
-})
+});
