@@ -1,13 +1,23 @@
+// Mock the modules before any imports
+jest.mock('@clerk/nextjs/server', () => ({
+  currentUser: jest.fn(),
+}));
+
+jest.mock('@/lib/db', () => ({
+  db: {
+    user: {
+      findUnique: jest.fn(),
+      create: jest.fn(),
+    },
+  },
+}));
+
 import { currentUser } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { checkUser } from './checkUser';
 
-// Mock the external dependencies
-jest.mock('@clerk/nextjs/server');
-jest.mock('@/lib/db');
-
-const mockedCurrentUser = jest.mocked(currentUser);
-const mockedDb = jest.mocked(db);
+const mockedCurrentUser = currentUser as jest.MockedFunction<typeof currentUser>;
+const mockedDb = db as any;
 
 describe('checkUser', () => {
   beforeEach(() => {
