@@ -1,7 +1,7 @@
 // File: components/AddLearningRecord.tsx
 'use client';
 import { useState, useEffect } from 'react';
-import addLearningRecord from '@/app/actions/addLearningRecord';
+import addLearningRecord from '@/app/actions/AddLearningRecord';
 
 interface LearningItem {
   id: string;
