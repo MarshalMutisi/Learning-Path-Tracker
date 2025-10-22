@@ -1,6 +1,6 @@
 // File: app/actions/getRecentActivity.ts
 'use server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
 interface ActivityItem {
@@ -26,11 +26,13 @@ async function getRecentActivity(): Promise<ActivityItem[]> {
 
     // If user doesn't exist, create them
     if (!user) {
-      const clerkUser = await auth();
+      // Get the full user object using currentUser
+      const clerkUser = await currentUser();
       if (clerkUser) {
         user = await db.user.create({
           data: {
             clerkUserId: userId,
+            // Fixed: Use emailAddresses from the full user object
             email: clerkUser.emailAddresses[0]?.emailAddress || '',
             name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
             imageUrl: clerkUser.imageUrl,
