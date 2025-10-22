@@ -30,7 +30,7 @@ export default async function HomePage() {
     modules: path.modules.map(module => ({
       ...module,
       learningItems: module.learningItems.map(item => {
-        // Extract only the properties that are in the LearningItem type
+        // Extract the properties that are in the LearningItem type
         const { id, createdAt, title, progress, targetDate, url, type, isComplete, estimatedHours, order, completedAt, moduleId } = item;
         return {
           id,
@@ -44,7 +44,10 @@ export default async function HomePage() {
           estimatedHours,
           order,
           completedAt,
-          moduleId
+          moduleId,
+          // Add the required properties that were missing
+          moduleTitle: module.title,
+          pathTitle: path.title
         };
       })
     }))
