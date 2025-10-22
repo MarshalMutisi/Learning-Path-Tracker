@@ -1,6 +1,6 @@
 // File: app/actions/AddLearningRecord.ts
 'use server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 
@@ -36,13 +36,14 @@ async function addLearningRecord(formData: FormData) {
 
     // If user doesn't exist, create them
     if (!user) {
-      const clerkUser = await auth();
+      // Get the full user object using currentUser
+      const clerkUser = await currentUser();
       if (clerkUser) {
-        // Fixed: Use primaryEmailAddress instead of emailAddresses
         user = await db.user.create({
           data: {
             clerkUserId: userId,
-            email: clerkUser.primaryEmailAddress?.emailAddress || '',
+            // Fixed: Use emailAddresses from the full user object
+            email: clerkUser.emailAddresses[0]?.emailAddress || '',
             name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
             imageUrl: clerkUser.imageUrl,
           }
