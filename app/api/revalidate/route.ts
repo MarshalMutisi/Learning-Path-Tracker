@@ -13,7 +13,8 @@ export async function POST(request: NextRequest) {
     revalidatePath(path);
     
     return NextResponse.json({ revalidated: true, now: Date.now() });
-  } catch (_error) {  // Added underscore prefix to indicate intentionally unused
+  } catch {
+    // Removed the unused error parameter since we're not using it
     return NextResponse.json({ error: 'Failed to revalidate' }, { status: 500 });
   }
 }

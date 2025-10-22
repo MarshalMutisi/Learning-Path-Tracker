@@ -1,4 +1,5 @@
 import { SignInButton } from '@clerk/nextjs';
+import Image from 'next/image'; // Added import for Next.js Image component
 
 const Guest = () => {
   return (
@@ -20,9 +21,11 @@ const Guest = () => {
           </SignInButton>
         </div>
         <div className='flex-1 flex justify-center items-center'>
-          <img
-            src='learning_tracker.png'
+          <Image
+            src='/learning_tracker.png' // Added leading slash for absolute path
             alt='Learning Path Tracker Illustration'
+            width={512} // Set appropriate width
+            height={384} // Set appropriate height (maintains aspect ratio)
             className='w-full md:max-w-md rounded-tl-3xl rounded-br-3xl shadow-lg'
           />
         </div>

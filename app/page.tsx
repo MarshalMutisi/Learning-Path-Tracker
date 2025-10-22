@@ -1,7 +1,6 @@
 // File: app/page.tsx
 import AddLearningRecord from '@/components/AddLearningRecord';
 import Guest from '@/components/Guest';
-import CreateLearningPathButton from '@/components/CreateLearningPathButton';
 import LearningProgressChart from '@/components/LearningProgressChart';
 import AverageProgress from '@/components/AverageProgress';
 import RecentActivity from '@/components/RecentActivity';
@@ -12,6 +11,7 @@ import getLearningRecords from '@/app/actions/getLearningRecords';
 import getAverageProgress from '@/app/actions/getAverageProgress';
 import getRecentActivity from '@/app/actions/getRecentActivity';
 import Link from 'next/link';
+import Image from 'next/image'; // Added import for Next.js Image component
 
 export default async function HomePage() {
   // Removed: noStore();
@@ -51,9 +51,11 @@ export default async function HomePage() {
         <div className='space-y-6'>
           <div className='bg-white p-6 rounded-lg shadow-md flex flex-col sm:flex-row items-center sm:items-start gap-6'>
             {/* User Image */}
-            <img
+            <Image
               src={user.imageUrl}
               alt={`${user.firstName}'s profile`}
+              width={96} // 24 * 4 (w-24 = 6rem = 96px)
+              height={96} // 24 * 4 (h-24 = 6rem = 96px)
               className='w-24 h-24 rounded-full border border-gray-300 shadow-md'
             />
 

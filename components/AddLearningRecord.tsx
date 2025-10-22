@@ -14,7 +14,19 @@ interface LearningItem {
   pathTitle: string;
 }
 
-const AddLearningRecord = ({ learningPaths }: { learningPaths: any[] }) => {
+interface Module {
+  id: string;
+  title: string;
+  learningItems?: LearningItem[];
+}
+
+interface LearningPath {
+  id: string;
+  title: string;
+  modules?: Module[];
+}
+
+const AddLearningRecord = ({ learningPaths }: { learningPaths: LearningPath[] }) => {
   const [selectedItemId, setSelectedItemId] = useState('');
   const [content, setContent] = useState('');
   const [progress, setProgress] = useState(50);
