@@ -20,6 +20,7 @@ CREATE TABLE "learning_paths" (
     "title" TEXT NOT NULL,
     "description" TEXT,
     "progress" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "targetDate" TIMESTAMP(3),
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -34,6 +35,7 @@ CREATE TABLE "modules" (
     "description" TEXT,
     "order" INTEGER NOT NULL,
     "progress" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "targetDate" TIMESTAMP(3),
     "learningPathId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -48,6 +50,9 @@ CREATE TABLE "learning_items" (
     "type" "ResourceType" NOT NULL,
     "isComplete" BOOLEAN NOT NULL DEFAULT false,
     "estimatedHours" INTEGER,
+    "order" INTEGER NOT NULL,
+    "completedAt" TIMESTAMP(3),
+    "targetDate" TIMESTAMP(3),
     "moduleId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

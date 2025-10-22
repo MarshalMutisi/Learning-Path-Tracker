@@ -28,6 +28,7 @@ model LearningPath {
   title       String
   description String?
   progress    Float    @default(0)
+  targetDate  DateTime? // Add this field
   userId      String
   user        User     @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -44,6 +45,7 @@ model Module {
   description    String?
   order          Int
   progress       Float         @default(0)
+  targetDate     DateTime?     // Add this field
   learningPathId String
   learningPath   LearningPath  @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
   learningItems  LearningItem[]
@@ -53,6 +55,8 @@ model Module {
   @@map("modules")
 }
 
+// File: prisma/schema.prisma
+
 model LearningItem {
   id           String       @id @default(uuid())
   title        String
@@ -60,6 +64,10 @@ model LearningItem {
   type         ResourceType
   isComplete   Boolean      @default(false)
   estimatedHours Int?
+  order        Int          // Add this field
+  completedAt  DateTime?    // Add this field
+  targetDate   DateTime?    // Add this field
+  progress     Float        @default(0) // Add this field
   moduleId     String
   module       Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   notes        Note[]
