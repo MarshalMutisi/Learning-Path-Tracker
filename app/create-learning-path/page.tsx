@@ -2,7 +2,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+// Removed the unused import: import { revalidatePath } from 'next/cache';
 
 const CreateLearningPathPage = () => {
   const router = useRouter();

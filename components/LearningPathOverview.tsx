@@ -1,4 +1,16 @@
-const LearningPathOverview = ({ learningPaths }: { learningPaths: any[] }) => {
+// File: app/components/LearningPathOverview.tsx
+
+interface LearningPath {
+  id: string;
+  title: string;
+  description?: string;
+  progress: number;
+  modules: {
+    length: number;
+  };
+}
+
+const LearningPathOverview = ({ learningPaths }: { learningPaths: LearningPath[] }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4 text-blue-600">Your Learning Paths</h3>

@@ -17,7 +17,33 @@ import { db } from '@/lib/db';
 import { checkUser } from './checkUser';
 
 const mockedCurrentUser = currentUser as jest.MockedFunction<typeof currentUser>;
-const mockedDb = db as any;
+
+// Define proper types for our test objects
+interface ClerkUser {
+  id: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  imageUrl?: string;
+  emailAddresses: Array<{ emailAddress: string }>;
+}
+
+interface DbUser {
+  id: string;
+  clerkUserId: string;
+  name: string;
+  imageUrl: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Type the mocked db object
+const mockedDb = db as {
+  user: {
+    findUnique: jest.MockedFunction<typeof db.user.findUnique>;
+    create: jest.MockedFunction<typeof db.user.create>;
+  };
+};
 
 describe('checkUser', () => {
   beforeEach(() => {
@@ -39,7 +65,7 @@ describe('checkUser', () => {
 
   it('should return existing user when found in database', async () => {
     // Arrange
-    const mockClerkUser = {
+    const mockClerkUser: ClerkUser = {
       id: 'user_123',
       firstName: 'John',
       lastName: 'Doe',
@@ -47,7 +73,7 @@ describe('checkUser', () => {
       emailAddresses: [{ emailAddress: 'john@example.com' }]
     };
 
-    const mockDbUser = {
+    const mockDbUser: DbUser = {
       id: 'db_123',
       clerkUserId: 'user_123',
       name: 'John Doe',
@@ -57,7 +83,7 @@ describe('checkUser', () => {
       updatedAt: new Date(),
     };
 
-    mockedCurrentUser.mockResolvedValue(mockClerkUser as any);
+    mockedCurrentUser.mockResolvedValue(mockClerkUser);
     mockedDb.user.findUnique.mockResolvedValue(mockDbUser);
 
     // Act
@@ -73,7 +99,7 @@ describe('checkUser', () => {
 
   it('should create new user when not found in database', async () => {
     // Arrange
-    const mockClerkUser = {
+    const mockClerkUser: ClerkUser = {
       id: 'user_456',
       firstName: 'Jane',
       lastName: 'Smith',
@@ -81,7 +107,7 @@ describe('checkUser', () => {
       emailAddresses: [{ emailAddress: 'jane@example.com' }]
     };
 
-    const mockNewUser = {
+    const mockNewUser: DbUser = {
       id: 'db_456',
       clerkUserId: 'user_456',
       name: 'Jane Smith',
@@ -91,7 +117,7 @@ describe('checkUser', () => {
       updatedAt: new Date(),
     };
 
-    mockedCurrentUser.mockResolvedValue(mockClerkUser as any);
+    mockedCurrentUser.mockResolvedValue(mockClerkUser);
     mockedDb.user.findUnique.mockResolvedValue(null);
     mockedDb.user.create.mockResolvedValue(mockNewUser);
 

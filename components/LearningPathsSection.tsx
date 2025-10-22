@@ -6,12 +6,25 @@ import DeleteLearningPathButton from './DeleteLearningPathButton';
 import CreateLearningPathButton from './CreateLearningPathButton';
 import getLearningPaths from '@/app/actions/getLearningPaths';
 
+interface LearningItem {
+  id: string;
+  title: string;
+  // Add other learning item properties as needed
+}
+
+interface Module {
+  id: string;
+  title: string;
+  learningItems?: LearningItem[];
+  // Add other module properties as needed
+}
+
 interface LearningPath {
   id: string;
   title: string;
   description?: string;
   progress: number;
-  modules: any[];
+  modules: Module[];
 }
 
 export default function LearningPathsSection() {
@@ -20,7 +33,7 @@ export default function LearningPathsSection() {
 
   useEffect(() => {
     const fetchLearningPaths = async () => {
-      const paths = await getLearningPaths();
+      const paths = await getLearningPaths() as LearningPath[]; // Explicitly cast the result
       setLearningPaths(paths);
       setLoading(false);
     };

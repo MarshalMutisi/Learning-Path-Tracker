@@ -4,6 +4,12 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 
+interface LearningItemUpdateData {
+  progress: number;
+  isComplete: boolean;
+  completedAt?: Date;
+}
+
 async function addLearningRecord(formData: FormData) {
   // Extract form data
   const content = formData.get('content') as string;
@@ -97,7 +103,7 @@ async function addLearningRecord(formData: FormData) {
     }
 
     // Update learning item progress and completedAt if fully completed
-    const updateData: any = {
+    const updateData: LearningItemUpdateData = {
       progress,
       isComplete: progress >= 100
     };

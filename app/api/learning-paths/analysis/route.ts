@@ -1,9 +1,57 @@
 // File: app/api/learning-paths/analysis/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db'; // Use your existing database connection
-import { auth } from '@clerk/nextjs/server'; // If you're using Clerk for auth
+import { db } from '@/lib/db';
+import { auth } from '@clerk/nextjs/server';
 
-export async function GET(request: NextRequest) {
+// Define interfaces for our data structures
+interface LearningItem {
+  id: string;
+  title: string;
+  type?: string;
+  isComplete: boolean;
+  // Add other properties as needed
+}
+
+interface Module {
+  id: string;
+  title: string;
+  learningItems: LearningItem[];
+  // Add other properties as needed
+}
+
+interface LearningPath {
+  id: string;
+  title: string;
+  createdAt: Date;
+  modules: Module[];
+  // Add other properties as needed
+}
+
+interface PathData {
+  id: string;
+  title: string;
+  progress: number;
+  completedItems: number;
+  totalItems: number;
+  createdAt: Date;
+}
+
+interface Analytics {
+  bestLearningPaths: PathData[];
+  worstLearningPaths: PathData[];
+  mostProductiveDays: string[];
+  leastProductiveDays: string[];
+  learningTypeDistribution: Record<string, number>;
+  completionTrends: { date: string; completed: number }[];
+  averageCompletionTime: number;
+  totalLearningTime: number;
+  totalLearningPaths: number;
+  totalModules: number;
+  totalItems: number;
+  completedItems: number;
+}
+
+export async function GET(_request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -35,15 +83,15 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function calculateLearningAnalytics(learningPaths: any[]) {
+function calculateLearningAnalytics(learningPaths: LearningPath[]): Analytics {
   // Initialize analytics object
-  const analytics = {
-    bestLearningPaths: [] as any[],
-    worstLearningPaths: [] as any[],
-    mostProductiveDays: [] as string[],
-    leastProductiveDays: [] as string[],
-    learningTypeDistribution: {} as Record<string, number>,
-    completionTrends: [] as { date: string; completed: number }[],
+  const analytics: Analytics = {
+    bestLearningPaths: [],
+    worstLearningPaths: [],
+    mostProductiveDays: [],
+    leastProductiveDays: [],
+    learningTypeDistribution: {},
+    completionTrends: [],
     averageCompletionTime: 0,
     totalLearningTime: 0,
     totalLearningPaths: learningPaths.length,
@@ -59,9 +107,9 @@ function calculateLearningAnalytics(learningPaths: any[]) {
     const learningTypes: Record<string, number> = {};
     
     // Process modules and items
-    path.modules.forEach((module: any) => {
+    path.modules.forEach((module: Module) => {
       analytics.totalModules++;
-      module.learningItems.forEach((item: any) => {
+      module.learningItems.forEach((item: LearningItem) => {
         analytics.totalItems++;
         pathItems++;
         if (item.isComplete) {
@@ -82,7 +130,7 @@ function calculateLearningAnalytics(learningPaths: any[]) {
     const pathProgress = pathItems > 0 ? Math.round((pathCompletedItems / pathItems) * 100) : 0;
     
     // Add to best/worst paths
-    const pathData = {
+    const pathData: PathData = {
       id: path.id,
       title: path.title,
       progress: pathProgress,

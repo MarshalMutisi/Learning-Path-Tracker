@@ -69,7 +69,7 @@ export default function DeleteLearningPathButton({
             <div className="p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Confirm Deletion</h3>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete "{learningPathTitle}"? This action cannot be undone and will permanently remove all associated modules and learning items.
+                Are you sure you want to delete &quot;{learningPathTitle}&quot;? This action cannot be undone and will permanently remove all associated modules and learning items.
               </p>
               
               {error && (

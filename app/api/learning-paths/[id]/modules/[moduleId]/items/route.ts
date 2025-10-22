@@ -40,7 +40,7 @@ export async function POST(
     }
 
     // Verify the module belongs to a learning path owned by the user
-    const module = await db.module.findFirst({
+    const moduleRecord = await db.module.findFirst({
       where: {
         id: moduleId, // Use the awaited moduleId
         learningPath: {
@@ -50,7 +50,7 @@ export async function POST(
       }
     });
 
-    if (!module) {
+    if (!moduleRecord) {
       return NextResponse.json({ error: 'Module not found' }, { status: 404 });
     }
 

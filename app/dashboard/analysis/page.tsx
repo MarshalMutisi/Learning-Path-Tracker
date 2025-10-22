@@ -281,7 +281,7 @@ export default function LearningAnalysisPage() {
                 <div className="p-4 bg-green-50 rounded-lg">
                   <h3 className="font-medium text-green-800 mb-2">Leverage Your Strengths</h3>
                   <p className="text-green-700">
-                    You're making excellent progress on "{analytics.bestLearningPaths[0].title}". 
+                    You&apos;re making excellent progress on &quot;{analytics.bestLearningPaths[0].title}&quot;. 
                     Apply similar strategies to other learning paths.
                   </p>
                 </div>
@@ -291,7 +291,7 @@ export default function LearningAnalysisPage() {
                 <div className="p-4 bg-red-50 rounded-lg">
                   <h3 className="font-medium text-red-800 mb-2">Focus Areas</h3>
                   <p className="text-red-700">
-                    "{analytics.worstLearningPaths[0].title}" needs attention. 
+                    &quot;{analytics.worstLearningPaths[0].title}&quot; needs attention. 
                     Consider breaking it into smaller, manageable tasks.
                   </p>
                 </div>
@@ -301,7 +301,7 @@ export default function LearningAnalysisPage() {
                 <h3 className="font-medium text-blue-800 mb-2">Optimal Learning Schedule</h3>
                 <p className="text-blue-700">
                   Based on your patterns, schedule challenging learning materials on {analytics.mostProductiveDays[0]} 
-                  when you're most productive.
+                  when you&apos;re most productive.
                 </p>
               </div>
             </div>

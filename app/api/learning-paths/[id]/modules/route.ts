@@ -53,7 +53,7 @@ export async function POST(
 
     const { title, description, order } = await request.json();
 
-    const module = await db.module.create({
+    const newModule = await db.module.create({
       data: {
         title,
         description,
@@ -62,7 +62,7 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(module, { status: 201 });
+    return NextResponse.json(newModule, { status: 201 });
   } catch (error) {
     console.error('Error creating module:', error);
     return NextResponse.json(
