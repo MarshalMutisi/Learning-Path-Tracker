@@ -11,11 +11,10 @@ import getLearningPaths from '@/app/actions/getLearningPaths';
 import getLearningRecords from '@/app/actions/getLearningRecords';
 import getAverageProgress from '@/app/actions/getAverageProgress';
 import getRecentActivity from '@/app/actions/getRecentActivity';
-import { unstable_noStore as noStore } from 'next/cache';
 import Link from 'next/link';
 
 export default async function HomePage() {
-  noStore(); // This disables caching for this page
+  // Removed: noStore();
   
   const user = await currentUser();
   if (!user) {
@@ -198,7 +197,6 @@ export default async function HomePage() {
                 <span className='text-sm font-medium text-gray-800'>New Learning Path</span>
               </Link>
               
-              {/* Analytics Link */}
               <Link 
                 href="/dashboard/analysis" 
                 className='p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors text-center'

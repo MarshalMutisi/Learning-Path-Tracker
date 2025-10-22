@@ -1,15 +1,14 @@
 // File: app/api/learning-paths/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
+import { auth } from '@clerk/nextjs/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
-    
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -36,9 +35,12 @@ export async function GET(
       }
     }
 
+    // Await the params before accessing properties
+    const { id } = await params;
+    
     const learningPath = await db.learningPath.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: user.clerkUserId,
       },
       include: {

@@ -138,7 +138,9 @@ async function addLearningRecord(formData: FormData) {
       data: { progress: pathProgress }
     });
 
+    // Revalidate the home page to show updated data
     revalidatePath('/');
+    
     return { success: true };
   } catch (error) {
     console.error('Error adding learning record:', error);
