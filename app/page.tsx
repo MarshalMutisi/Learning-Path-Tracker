@@ -24,16 +24,29 @@ export default async function HomePage() {
   // Fetch learning paths
   const learningPaths = await getLearningPaths();
   
-  // Transform the learning paths to include moduleTitle and pathTitle in learning items
+  // Transform the learning paths to match the expected type
   const transformedLearningPaths = learningPaths.map(path => ({
     ...path,
     modules: path.modules.map(module => ({
       ...module,
-      learningItems: module.learningItems.map(item => ({
-        ...item,
-        moduleTitle: module.title,
-        pathTitle: path.title
-      }))
+      learningItems: module.learningItems.map(item => {
+        // Extract only the properties that are in the LearningItem type
+        const { id, createdAt, title, progress, targetDate, url, type, isComplete, estimatedHours, order, completedAt, moduleId } = item;
+        return {
+          id,
+          createdAt,
+          title,
+          progress,
+          targetDate,
+          url: url ?? undefined, // Convert null to undefined
+          type,
+          isComplete,
+          estimatedHours,
+          order,
+          completedAt,
+          moduleId
+        };
+      })
     }))
   }));
   
