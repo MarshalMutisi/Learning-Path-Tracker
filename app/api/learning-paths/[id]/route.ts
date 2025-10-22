@@ -1,7 +1,7 @@
 // File: app/api/learning-paths/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server'; // Import currentUser
 
 export async function GET(
   request: NextRequest,
@@ -20,14 +20,23 @@ export async function GET(
 
     // If user doesn't exist, create them
     if (!user) {
-      const clerkUser = await auth();
+      // Use currentUser() to get detailed user information
+      const clerkUser = await currentUser();
       if (clerkUser) {
+        // Safely access email with multiple fallback options
+        let email = '';
+        if (clerkUser.emailAddresses && clerkUser.emailAddresses.length > 0) {
+          email = clerkUser.emailAddresses[0].emailAddress;
+        } else if (clerkUser.primaryEmailAddress) {
+          email = clerkUser.primaryEmailAddress.emailAddress;
+        }
+        
         user = await db.user.create({
           data: {
             clerkUserId: userId,
-            email: clerkUser.emailAddresses[0]?.emailAddress || '',
+            email: email,
             name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
-            imageUrl: clerkUser.imageUrl,
+            imageUrl: clerkUser.imageUrl || '',
           }
         });
       } else {
