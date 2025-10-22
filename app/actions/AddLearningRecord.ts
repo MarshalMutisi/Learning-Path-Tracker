@@ -1,4 +1,4 @@
-// File: app/actions/addLearningRecord.ts
+// File: app/actions/AddLearningRecord.ts
 'use server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
@@ -38,10 +38,11 @@ async function addLearningRecord(formData: FormData) {
     if (!user) {
       const clerkUser = await auth();
       if (clerkUser) {
+        // Fixed: Use primaryEmailAddress instead of emailAddresses
         user = await db.user.create({
           data: {
             clerkUserId: userId,
-            email: clerkUser.emailAddresses[0]?.emailAddress || '',
+            email: clerkUser.primaryEmailAddress?.emailAddress || '',
             name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
             imageUrl: clerkUser.imageUrl,
           }

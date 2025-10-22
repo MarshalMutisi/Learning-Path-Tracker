@@ -16,7 +16,7 @@ interface Module {
   id: string;
   title: string;
   learningItems: LearningItem[];
-  // Add other properties as needed
+  // Add other module properties as needed
 }
 
 interface LearningPath {
@@ -51,7 +51,10 @@ interface Analytics {
   completedItems: number;
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _request: NextRequest
+) {
   try {
     const { userId } = await auth();
     if (!userId) {
