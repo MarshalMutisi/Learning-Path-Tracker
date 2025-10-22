@@ -24,6 +24,19 @@ export default async function HomePage() {
   // Fetch learning paths
   const learningPaths = await getLearningPaths();
   
+  // Transform the learning paths to include moduleTitle and pathTitle in learning items
+  const transformedLearningPaths = learningPaths.map(path => ({
+    ...path,
+    modules: path.modules.map(module => ({
+      ...module,
+      learningItems: module.learningItems.map(item => ({
+        ...item,
+        moduleTitle: module.title,
+        pathTitle: path.title
+      }))
+    }))
+  }));
+  
   // Fetch learning records for the chart
   const learningRecords = await getLearningRecords();
   
@@ -52,8 +65,8 @@ export default async function HomePage() {
           <div className='bg-white p-6 rounded-lg shadow-md flex flex-col sm:flex-row items-center sm:items-start gap-6'>
             {/* User Image */}
             <Image
-              src={user.imageUrl}
-              alt={`${user.firstName}'s profile`}
+              src={user.imageUrl || ''}
+              alt={`${user.firstName || 'User'}'s profile`}
               width={96} // 24 * 4 (w-24 = 6rem = 96px)
               height={96} // 24 * 4 (h-24 = 6rem = 96px)
               className='w-24 h-24 rounded-full border border-gray-300 shadow-md'
@@ -62,7 +75,7 @@ export default async function HomePage() {
             {/* User Details */}
             <div className='flex-1'>
               <h2 className='text-2xl md:text-3xl font-bold text-blue-600 mb-2'>
-                Welcome Back, {user.firstName} 👋
+                Welcome Back, {user.firstName || 'User'} 👋
               </h2>
               <p className='text-gray-600 mb-4'>
                 Here&apos;s a quick overview of your learning progress.
@@ -71,7 +84,7 @@ export default async function HomePage() {
               <div className='space-y-2'>
                 <p className='text-gray-600'>
                   <span className='font-semibold text-gray-800'>Joined:</span>{' '}
-                  {new Date(user.createdAt).toLocaleDateString()}
+                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                 </p>
                 <p className='text-gray-600'>
                   <span className='font-semibold text-gray-800'>
@@ -100,7 +113,7 @@ export default async function HomePage() {
           </div>
           
           {/* Add Learning Record Form */}
-          <AddLearningRecord learningPaths={learningPaths || []} />
+          <AddLearningRecord learningPaths={transformedLearningPaths || []} />
         </div>
 
         {/* Right Column */}
