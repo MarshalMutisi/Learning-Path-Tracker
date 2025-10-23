@@ -63,16 +63,20 @@ export default function LearningPathsSection() {
               <div className='flex justify-between items-start'>
                 <Link href={`/learning-path/${path.id}`} className='block group flex-1 pr-2'>
                   <div className='flex items-start'>
-                    <div className='flex-1'>
+                    <div className='flex-1 min-w-0'> {/* Added min-w-0 to prevent flex item overflow */}
                       <div className='flex items-center'>
-                        <h4 className='font-medium text-gray-800 group-hover:text-blue-600 transition-colors'>
+                        <h4 className='font-medium text-gray-800 group-hover:text-blue-600 transition-colors truncate'>
                           {path.title}
                         </h4>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </div>
-                      <p className='text-sm text-gray-600 truncate mt-1'>{path.description || 'No description'}</p>
+                      <div className='mt-1'> {/* Added wrapper div for better control */}
+                        <p className='text-sm text-gray-600 break-words'>
+                          {path.description || 'No description'}
+                        </p>
+                      </div>
                       <div className='mt-2 w-full bg-gray-200 rounded-full h-2'>
                         <div
                           className='bg-blue-500 h-2 rounded-full transition-all duration-300'
