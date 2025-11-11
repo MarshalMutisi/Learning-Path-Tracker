@@ -16,10 +16,29 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Development Environment Setup
 
+### Important Notes for Local Development
+
+This application works seamlessly on Vercel without additional configuration, but local development requires specific setup due to differences between development and production environments:
+
+#### Image Domain Configuration
+**Why it's needed locally:** Next.js requires explicit configuration for external image domains in development mode. The error `hostname "img.clerk.com" is not configured` occurs because:
+
+1. **Development Mode:** Next.js strictly enforces image domain security in development
+2. **Production Mode (Vercel):** Vercel automatically optimizes builds and handles external images differently
+
+**Solution:** Add the following to your `next.config.js`:
+```javascript
+const nextConfig = {
+  images: {
+    domains: ['img.clerk.com', 'images.clerk.dev'],
+  },
+};
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
@@ -28,6 +47,7 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
 
 ## Deploy on Vercel
 
